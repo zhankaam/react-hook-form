@@ -1,5 +1,15 @@
-import React from 'react'
-import {Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, TextField, Button, Grid} from '@material-ui/core'
+import React, {useEffect} from 'react'
+import {
+    Checkbox,
+    FormControl,
+    FormControlLabel,
+    FormGroup,
+    FormLabel,
+    TextField,
+    Button,
+    Grid,
+    Typography
+} from '@material-ui/core'
 import {useForm} from 'react-hook-form'
 
 type FormValuesType = {
@@ -10,11 +20,14 @@ type FormValuesType = {
 
 export const Login = () => {
 
-    const {register, handleSubmit, formState: {errors}, watch} = useForm<FormValuesType>()
+    const {register, handleSubmit, formState: {errors}, setValue} = useForm<FormValuesType>({mode: "all"})
     const onSubmit = () => {
 
     }
-    console.log(watch())
+
+    useEffect(() => {
+        register("rememberMe")
+    }, [register])
 
     return <Grid container justify="center">
         <Grid item xs={4}>
@@ -22,9 +35,7 @@ export const Login = () => {
                 <FormControl>
                     <FormLabel>
                         <p>To log in get registered
-                            <a href={'https://social-network.samuraijs.com/'}
-                               target={'_blank'}>here
-                            </a>
+                            <a rel="noreferrer" href={'https://social-network.samuraijs.com/'} target={'_blank'}> here </a>
                         </p>
                         <p>or use common test account credentials:</p>
                         <p>Email: free@samuraijs.com</p>
@@ -34,21 +45,33 @@ export const Login = () => {
                         <TextField
                             label="Email"
                             margin="normal"
-                            {...register("email", {required: "Email is required"})}
+                            {...register("email", {required: "Email is a required field"})}
                         />
-                        {errors.email && <p>{errors.email.message}</p>}
+                        {errors.email && <Typography variant="inherit" color="secondary">
+                            {errors.email.message}
+                        </Typography>
+                        }
                         <TextField
                             type="password"
                             label="Password"
                             margin="normal"
-                            {...register("password", {required: "Password is required", minLength: 8})}
+                            {...register("password", {
+                                required: "Password is a required field", minLength: {
+                                    value: 8,
+                                    message: 'Your password must be greater than 6 characters',
+                                },
+                            })}
                         />
-                        {errors.password && <p>{errors.password.message}</p>}
+                        {errors.password && <Typography variant="inherit" color="secondary">
+                            {errors.password.message}
+                        </Typography>}
                         <FormControlLabel
-                            label={"Remember me"}
-                            control={<Checkbox />}
-                            {...register("rememberMe")}
-
+                            label="Remember Me"
+                            control={<Checkbox
+                                color="primary"
+                                onChange={e => setValue("rememberMe", e.target.checked)}
+                            />
+                            }
                         />
                         <Button type={'submit'} variant={'contained'} color={'primary'}>Login</Button>
                     </FormGroup>
